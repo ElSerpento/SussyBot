@@ -32,7 +32,7 @@ class Image(commands.Cog):
     async def parse_img(self, ctx):
 
         # Wait a bit so the embed shows up, if it's an attachment or link
-        await asyncio.sleep(0.3)
+        await asyncio.sleep(0.75)
 
         # Parse the user's message for the image they want modified
         img_url = await util.parse_msg(ctx.message)
@@ -100,6 +100,34 @@ class Image(commands.Cog):
 
             await ctx.send(embed=em)
 
+    
+    @commands.command(name='hueshift', help='Hue shifts an image', usage=('percent URL'
+    '\nExample: **hueshift 50%\ imgur.whatever.gov/bossbaby.png**\n' 'This command will rotate the given '
+    "image's hue by 50%\."))
+    async def hue_shift(self, ctx, percent = None):
+        
+        img = await self.parse_img(ctx)
+        if not img:
+            return
+
+        # If the percent arg is an url or is omitted, do a random number
+        if not percent or not percent.isdecimal():
+            percent = random.randrange(1, 100)
+        
+        # If the percent is invalid, replace it with a random number
+        percent = int(percent)
+        if percent > 100 or percent < 1:
+            percent = random.randrange(1, 100)
+
+        # Start typing as image is filtered
+        async with ctx.typing():
+
+            img = await im.hue_shift(img, percent)
+            em = await util.embed_from_image(img, ctx.author.color, f'**Shifted hue by {percent}!**')
+
+            # Send result
+            await ctx.send(embed=em)
+
 
     @commands.group(name='random', case_insensitive=True, 
     description='Pulls a random image out of various sites')
@@ -160,13 +188,10 @@ class Image(commands.Cog):
     'it will mirror only half the image.'))
     async def leel(self, ctx, mode = None):
 
-        # Parse the mode the user wants to run the command with and
-        # deal with misspellings
+        # Parse the mode the user wants to run the command with
         if mode:
             if mode == 'append':
                 mode = True
-            elif mode != 'append' and mode.isalpha():
-                return await ctx.send_help(ctx.command)  
 
         # Get the desired image
         img = await self.parse_img(ctx)
@@ -193,8 +218,6 @@ class Image(commands.Cog):
         if mode:
             if mode == 'append':
                 mode = True
-            elif mode != 'append' and mode.isalpha():
-                return await ctx.send_help(ctx.command)
 
         # Get image from context
         img = await self.parse_img(ctx)

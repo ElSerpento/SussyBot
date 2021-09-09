@@ -59,38 +59,44 @@ async def deep_fry(img, reps):
     else:
         return await deep_fry(img, reps - 1)
 
-async def riir(img, append = False):
+async def riir(img, append):
     
     # Clone the image, take half of its width
     clone = img.clone()
-    half_w = int(img.width / 2) if not append else img.width
+    w = int(img.width / 2) if not append is True else img.width
 
     # Crop the right half of the image and flip it
-    img.crop(left=half_w, width=half_w, height=img.height)
+    img.crop(left=w, width=w, height=img.height)
     img.flop()
 
     # Crop the right half of the clone
-    clone.crop(width=img.width, left=half_w)
+    clone.crop(width=img.width, left=w)
 
     # Add clone to img (img on left, clone right) then return the result
     img.sequence.append(clone)
     img.concat()
     return img
 
-async def leel(img, append = False):
-    
+async def leel(img, append):
+
     # Clone the image and take half its width
     clone = img.clone()
-    half_w = int(img.width / 2) if not append else img.width
+    w = int(img.width / 2) if not append is True else img.width
 
     # Delete the right half of the image
-    img.crop(width=half_w, height=img.height)
+    img.crop(width=w, height=img.height)
 
     # Crop the clone to only its left side then flip it
-    clone.crop(width=half_w)
+    clone.crop(width=w)
     clone.flop()
 
     # Add clone to the right half of og image and return the result
     img.sequence.append(clone)
     img.concat()
+    return img
+
+async def hue_shift(img, rotation):
+
+    # Keep brightness and saturation intact, only change the hue
+    img.modulate(100, 100, rotation)
     return img

@@ -21,9 +21,7 @@ from bin.cogs.roles import Roles
 
 # Import class for custom help commands
 from bin.helpers.help_command import CustomHelpCommand
-
-# Import hidden commands module
-from bin.helpers.util import commands_from_module, error_embed
+from bin.helpers.util import error_embed
 
 
 # Initiate bot. Default intents, but enable members to be able to see the server's members for the roleopt command.
@@ -36,7 +34,7 @@ bot = commands.Bot(command_prefix=".", help_command=CustomHelpCommand(), case_in
 if os.path.isfile("./bin/db/bot.sqlite"):
     db_path = "./bin/db/bot.sqlite"
 else:
-    print("haha oopsie database not found")
+    print("haha oopsie db not found")
     exit()
 
 
@@ -73,4 +71,4 @@ async def on_command_error(ctx, error):
 
 
 # Starts up the bot.
-bot.run(os.getenv("BOT_TOKEN"))
+bot.run(os.getenv("TEST_TOKEN"))

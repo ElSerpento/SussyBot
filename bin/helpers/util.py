@@ -3,6 +3,7 @@ from inspect import iscoroutinefunction, getmembers
 from discord.ext import commands
 from datetime import datetime
 from wand import image
+import logging
 import aiohttp
 import discord
 import json
@@ -14,6 +15,8 @@ speedR = "<a:SpeedR:876709161675677767>"
 explosione = "<a:explosione:876709202603688006>"
 dumpyFren = "<a:dumpyFren:876709139089350667>"
 
+# Log imgur uploads
+logging.basicConfig(filename='imgur.log', level=logging.INFO)
 
 # Get local UTC offset
 def get_timezone():
@@ -25,16 +28,6 @@ def get_timezone():
     s += ":"
     s += m
     return s
-
-
-# Takes all the methods from a given module and adds them to the given bot.
-# Optionally it also makes them hidden.
-def commands_from_module(bot, module, hide = False):
-    # Get list of methods via inspect
-    l = [method[1] for method in getmembers(module, iscoroutinefunction)]
-    # Iterate through the methods and add them
-    for method in l:
-        bot.add_command(commands.Command(func=method, hidden=hide))
 
 
 # Method to convert 12h time to military format,
@@ -79,7 +72,7 @@ def parse_time(hour, period):
 
 async def embed_from_image(img, color, text = None):
     result_url = await imgur_upload(img.make_blob())
-    em = discord.Embed(color = color, text = text)
+    em = discord.Embed(color = color, description = text)
     em.set_image(url=result_url)
     return em
  
@@ -96,7 +89,7 @@ def make_embed(text, author=None):
 # Takes an image converted to a bytes object and uploads it to imgur, returning the image url.
 async def imgur_upload(img_byte):
     # Define parameters for POST request
-    url = "https://api.imgur.com/3/image"
+    url = "https://api.imgur.com/3/upload"
     payload = {"image": img_byte}
 
     # Define headers for aiohttp client
@@ -104,9 +97,11 @@ async def imgur_upload(img_byte):
     imgur_auth = {"Authorization": "Client-ID " + os.getenv("IMGUR_ID")}
 
     # Make post request, and return the response's link which would be the image's url
+    # Log every upload
     async with aiohttp.ClientSession(headers=imgur_auth) as session:
         async with session.post(url=url, data=payload) as response:
             response = json.loads(await response.text())
+            logging.info(f"response data: {response} Client-ID: {os.getenv('IMGUR_ID')}")
             return response["data"]["link"]
 
 
