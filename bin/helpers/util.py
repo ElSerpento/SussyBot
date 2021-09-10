@@ -101,7 +101,7 @@ async def imgur_upload(img_byte):
     async with aiohttp.ClientSession(headers=imgur_auth) as session:
         async with session.post(url=url, data=payload) as response:
             response = json.loads(await response.text())
-            logging.info(f"response data: {response} Client-ID: {os.getenv('IMGUR_ID')}")
+            logging.info(f"response data: {response}")
             return response["data"]["link"]
 
 
@@ -173,7 +173,7 @@ async def url_is_image(url):
             try:
                 async with session.head(url) as response:
                     # If the headers' content type is not image or is an animated image, return false
-                    mimetype = response.headers["Content-Type"].lower()
+                    mimetype = response.headers["Content-type"].lower()
                     if mimetype in ["image/gif", "image/apng"]:
                         return False
                     elif mimetype.startswith("image"):
