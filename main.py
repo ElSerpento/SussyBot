@@ -71,4 +71,4 @@ async def on_command_error(ctx, error):
 
 
 # Starts up the bot.
-bot.run(os.getenv("TEST_TOKEN"))
+bot.run(os.getenv("BOT_TOKEN"))
