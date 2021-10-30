@@ -38,3 +38,4 @@ Thumbs.db
 __pycache__/
 *.code-workspace
 *.sqlite
+.vscode

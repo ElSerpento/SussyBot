@@ -6,7 +6,7 @@ import discord
 import sqlite3
 import os
 
-# Configure logging, code copied straight from the discordpy docs :drippysmile:
+# Configure logging
 import logging
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
@@ -24,13 +24,13 @@ from bin.helpers.help_command import CustomHelpCommand
 from bin.helpers.util import error_embed
 
 
-# Initiate bot. Default intents, but enable members to be able to see the server's members for the roleopt command.
+# Initiate bot. Enable members to be able to see the server's members for the roleopt command.
 intents = discord.Intents.default()
 intents.members = True
 bot = commands.Bot(command_prefix=".", help_command=CustomHelpCommand(), case_insensitive=True, intents=intents)
 
 
-# If you can't open the database why even start the bot lmao
+# Exit if database can't be accessed
 if os.path.isfile("./bin/db/bot.sqlite"):
     db_path = "./bin/db/bot.sqlite"
 else:
@@ -61,7 +61,7 @@ async def on_ready():
 
 
 # Catch command errors so there are no runtime exceptions.
-# # Probably comment this out if you're changing shit around, yeah?
+# Probably comment this out if you're changing shit around, yeah?
 @bot.event
 async def on_command_error(ctx, error):
     if ctx.guild is None:

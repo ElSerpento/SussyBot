@@ -9,7 +9,7 @@ class Image(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.description = 'Does various thing to an image of your choosing, or brings up an image for you.'
+        self.description = 'Image filters, among other things'
 
 
     # Determine the repetitions a command should do,
@@ -129,8 +129,9 @@ class Image(commands.Cog):
             await ctx.send(embed=em)
 
 
-    @commands.group(name='random', case_insensitive=True, 
-    description='Pulls a random image out of various sites')
+    @commands.group(name='random', case_insensitive=True,
+    help='Randomizes images', 
+    description='Randomizes images')
     async def random(self, ctx):
         if ctx.invoked_subcommand is None:
             return await ctx.send_help(self.random)
